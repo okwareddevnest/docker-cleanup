@@ -1,0 +1,39 @@
+# Build artifacts
+docker-cleanup-*/
+*.deb
+
+# Repository files
+repo/
+*.gpg
+*.asc
+
+# GPG key files
+*.key
+*.secret
+*.pub
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Package build files
+*.buildinfo
+*.changes
+*.dsc
+*.tar.gz
+*.tar.xz
+*.tar.bz2
+
+# Local configuration
+*.local 

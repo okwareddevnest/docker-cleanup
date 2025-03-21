@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+# Stop and disable the timer
+systemctl stop docker-cleanup.timer
+systemctl disable docker-cleanup.timer
+systemctl daemon-reload 

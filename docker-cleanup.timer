@@ -1,0 +1,10 @@
+[Unit]
+Description=Docker Cleanup Timer
+
+[Timer]
+OnUnitActiveSec=2592000
+Persistent=true
+Unit=docker-cleanup.service
+
+[Install]
+WantedBy=timers.target 

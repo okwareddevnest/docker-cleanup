@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+# Copy configuration file if it doesn't exist
+if [ ! -f /etc/docker-cleanup.conf ]; then
+    cp /etc/docker-cleanup.conf /etc/docker-cleanup.conf
+fi
+
+# Copy and make config tool executable
+chmod 755 /usr/local/bin/docker-cleanup-config
+
+# Enable and start the timer
+systemctl daemon-reload
+systemctl enable docker-cleanup.timer
+systemctl start docker-cleanup.timer
+
+# Set proper permissions
+chmod 755 /usr/local/bin/docker-cleanup.sh
+
+# Display welcome message
+echo "Docker Cleanup has been installed successfully!"
+echo "Run 'docker-cleanup-config' to configure the cleanup settings." 
