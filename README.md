@@ -1,8 +1,8 @@
-# Docker Cleanup Package
+# Docker Cleanup 🐳
 
-A Debian package that provides an interactive Docker cleanup utility with configurable schedules and cleanup options. This package installs a systemd timer that runs according to your preferences to maintain system cleanliness.
+An interactive Docker cleanup utility that helps you maintain your system by automatically cleaning up unused Docker containers and resources.
 
-## Features
+## Features 🌟
 
 - 🎨 Beautiful interactive terminal interface with emojis and colors
 - ⏰ Configurable cleanup schedules (daily, weekly, monthly, or custom)
@@ -14,102 +14,81 @@ A Debian package that provides an interactive Docker cleanup utility with config
 - 📝 Detailed logging with timestamps
 - ⚙️ Easy configuration through interactive menu
 
-## Installation
+## Installation 📦
 
-### Adding the Repository
+See [INSTALL.md](INSTALL.md) for detailed installation instructions.
 
-1. Add the GPG key:
+Quick install:
+
 ```bash
-curl -fsSL https://your-repository-url/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-cleanup-archive-keyring.gpg
-```
+# Add GPG key
+curl -fsSL https://raw.githubusercontent.com/okwareddevnest/docker-cleanup/main/docker-cleanup.gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-cleanup-archive-keyring.gpg
 
-2. Add the repository to your sources:
-```bash
-echo "deb [signed-by=/usr/share/keyrings/docker-cleanup-archive-keyring.gpg] https://your-repository-url stable main" | sudo tee /etc/apt/sources.list.d/docker-cleanup.list
-```
+# Add repository
+echo "deb [signed-by=/usr/share/keyrings/docker-cleanup-archive-keyring.gpg] https://raw.githubusercontent.com/okwareddevnest/docker-cleanup/main/repo stable main" | sudo tee /etc/apt/sources.list.d/docker-cleanup.list
 
-3. Update package lists:
-```bash
+# Update and install
 sudo apt-get update
-```
-
-4. Install the package:
-```bash
 sudo apt-get install docker-cleanup
 ```
 
-## Usage
+## Usage 🚀
 
-After installation, you can configure the cleanup settings using the interactive configuration tool:
-
+1. Configure cleanup settings:
 ```bash
 docker-cleanup-config
 ```
 
-The configuration tool provides a menu-driven interface where you can:
-1. Configure the cleanup schedule
-2. Set cleanup options (all containers, stopped only, or by age)
-3. View current settings
-4. Run cleanup manually
-5. Exit the configuration tool
-
-### Schedule Options
-- Daily cleanup
-- Weekly cleanup
-- Monthly cleanup
-- Custom interval (in days)
-
-### Cleanup Options
-- Clean all containers
-- Clean only stopped containers
-- Clean containers older than X days
-
-### Manual Cleanup
-You can trigger a cleanup manually at any time:
+2. View current status:
 ```bash
-sudo systemctl start docker-cleanup.service
+systemctl status docker-cleanup.timer
 ```
 
-## Logs
-
-Cleanup activities are logged to the system journal. View logs with:
+3. View cleanup logs:
 ```bash
 journalctl -u docker-cleanup.service
 ```
 
-## Building from Source
+## Configuration Options ⚙️
 
-1. Install build dependencies:
+The interactive configuration tool (`docker-cleanup-config`) provides:
+
+1. Schedule Configuration:
+   - Daily cleanup
+   - Weekly cleanup
+   - Monthly cleanup
+   - Custom interval (in days)
+
+2. Cleanup Options:
+   - Clean all containers
+   - Clean only stopped containers
+   - Clean containers older than X days
+
+3. Additional Features:
+   - View current settings
+   - Run cleanup manually
+   - Monitor cleanup logs
+
+## Building from Source 🛠️
+
+1. Clone the repository:
 ```bash
-sudo apt-get install build-essential dpkg-dev reprepro gnupg
+git clone https://github.com/okwareddevnest/docker-cleanup.git
+cd docker-cleanup
 ```
 
-2. Generate GPG key (if not already done):
-```bash
-make generate-key
-```
-
-3. Update the GPG key ID in the Makefile
-
-4. Build the package:
+2. Build the package:
 ```bash
 make build
 ```
 
-5. Set up and publish to repository:
+3. Install locally:
 ```bash
-make publish
+sudo dpkg -i docker-cleanup-1.0.0.deb
+sudo apt-get install -f
 ```
 
-## Package Structure
-
-- `/usr/local/bin/docker-cleanup.sh`: Main cleanup script
-- `/usr/local/bin/docker-cleanup-config`: Interactive configuration tool
-- `/etc/systemd/system/docker-cleanup.service`: Systemd service unit
-- `/etc/systemd/system/docker-cleanup.timer`: Systemd timer unit
-- `/etc/docker-cleanup.conf`: Configuration file
-
-## Contributing
+## Contributing 🤝
 
 1. Fork the repository
 2. Create a feature branch
@@ -117,6 +96,14 @@ make publish
 4. Push to the branch
 5. Create a Pull Request
 
-## License
+## License 📄
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Author ✍️
+
+Dedan Okware ([@okwareddevnest](https://github.com/okwareddevnest))
+
+## Support 💬
+
+If you encounter any issues or have questions, please [open an issue](https://github.com/okwareddevnest/docker-cleanup/issues). 

@@ -2,7 +2,7 @@ Package: docker-cleanup
 Version: 1.0.0
 Section: admin
 Priority: optional
-Architecture: all
+Architecture: amd64
 Depends: docker-ce | docker.io, whiptail
 Maintainer: Dedan Okware <softengdedan@gmail.com>
 Description: Interactive Docker cleanup utility
