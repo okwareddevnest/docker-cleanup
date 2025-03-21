@@ -56,12 +56,12 @@ install-instructions:
 	@echo "" >> INSTALL.md
 	@echo "1. Add the GPG key:" >> INSTALL.md
 	@echo "```bash" >> INSTALL.md
-	@echo "curl -fsSL https://raw.githubusercontent.com/dedanokware/docker-cleanup/main/docker-cleanup.gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-cleanup-archive-keyring.gpg" >> INSTALL.md
+	@echo "curl -fsSL https://raw.githubusercontent.com/okwareddevnest/docker-cleanup/main/docker-cleanup.gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-cleanup-archive-keyring.gpg" >> INSTALL.md
 	@echo "```" >> INSTALL.md
 	@echo "" >> INSTALL.md
 	@echo "2. Add the repository:" >> INSTALL.md
 	@echo "```bash" >> INSTALL.md
-	@echo "echo \"deb [signed-by=/usr/share/keyrings/docker-cleanup-archive-keyring.gpg] https://raw.githubusercontent.com/dedanokware/docker-cleanup/main/repo stable main\" | sudo tee /etc/apt/sources.list.d/docker-cleanup.list" >> INSTALL.md
+	@echo "echo \"deb [signed-by=/usr/share/keyrings/docker-cleanup-archive-keyring.gpg] https://raw.githubusercontent.com/okwareddevnest/docker-cleanup/main/repo stable main\" | sudo tee /etc/apt/sources.list.d/docker-cleanup.list" >> INSTALL.md
 	@echo "```" >> INSTALL.md
 	@echo "" >> INSTALL.md
 	@echo "3. Update package lists:" >> INSTALL.md
