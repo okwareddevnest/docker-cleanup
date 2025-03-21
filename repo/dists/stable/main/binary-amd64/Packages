@@ -1,0 +1,22 @@
+Package: docker-cleanup
+Version: 1.0.0
+Architecture: amd64
+Maintainer: Dedan Okware <softengdedan@gmail.com>
+Depends: docker-ce | docker.io, whiptail
+Filename: pool/main/d/docker-cleanup/docker-cleanup-1.0.0.deb
+Size: 3288
+MD5sum: ef86660fdce80372f663ecf1ec1adf9c
+SHA1: 747fbdfd7fb5508bbe2b9576c53fc0bc0368e448
+SHA256: 43315fdb3569c0668bb4ab0ac22b49bc7f3290fc1698bd414bce8f7b0c3b3c53
+Section: admin
+Priority: optional
+Description: Interactive Docker cleanup utility
+ This package provides an interactive cleanup utility for Docker containers
+ and resources. It allows users to configure cleanup schedules and select
+ which containers to clean up. Features include:
+  - Interactive terminal interface with colorful UI
+  - Configurable cleanup schedules
+  - Selective container cleanup
+  - Automated periodic cleanup
+  - Detailed logging and status reporting
+
