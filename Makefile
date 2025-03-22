@@ -62,13 +62,33 @@ export-key:
 	gpg --armor --export $(GPG_KEY_ID) > docker-cleanup.gpg
 
 # Publish package to repository
-publish: build setup-repo
-	cp $(DEB_FILE) $(REPO_DIR)/pool/main/d/$(PACKAGE_NAME)/
-	cd $(REPO_DIR) && dpkg-scanpackages pool/main/d/$(PACKAGE_NAME) > dists/stable/main/binary-$(ARCH)/Packages
-	cd $(REPO_DIR) && gzip -k dists/stable/main/binary-$(ARCH)/Packages
-	cd $(REPO_DIR) && apt-ftparchive release dists/stable > dists/stable/Release
-	cd $(REPO_DIR) && gpg --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
-	cd $(REPO_DIR) && gpg --armor --output dists/stable/InRelease --clearsign dists/stable/Release
+publish: build
+	@echo "Publishing package to repository..."
+	@mkdir -p $(REPO_DIR)/conf
+	@mkdir -p $(REPO_DIR)/dists/stable/main/binary-$(ARCH)
+	@mkdir -p $(REPO_DIR)/pool/main/d/$(PACKAGE_NAME)
+	@mkdir -p $(REPO_DIR)/tmp
+	@echo "Origin: Docker Cleanup" > $(REPO_DIR)/conf/distributions
+	@echo "Label: Docker Cleanup" >> $(REPO_DIR)/conf/distributions
+	@echo "Codename: stable" >> $(REPO_DIR)/conf/distributions
+	@echo "Version: 1.0" >> $(REPO_DIR)/conf/distributions
+	@echo "Architectures: $(ARCH)" >> $(REPO_DIR)/conf/distributions
+	@echo "Components: main" >> $(REPO_DIR)/conf/distributions
+	@echo "Description: Docker Cleanup Repository" >> $(REPO_DIR)/conf/distributions
+	@echo "SignWith: $(GPG_KEY_ID)" >> $(REPO_DIR)/conf/distributions
+	@echo "Name: default" > $(REPO_DIR)/conf/incoming
+	@echo "IncomingDir: incoming" >> $(REPO_DIR)/conf/incoming
+	@echo "TempDir: tmp" >> $(REPO_DIR)/conf/incoming
+	@echo "Allow: stable" >> $(REPO_DIR)/conf/incoming
+	@echo "Cleanup: on_deny on_error" >> $(REPO_DIR)/conf/incoming
+	@cp $(DEB_FILE) $(REPO_DIR)/pool/main/d/$(PACKAGE_NAME)/
+	@cd $(REPO_DIR) && dpkg-scanpackages pool/main/d/$(PACKAGE_NAME) > dists/stable/main/binary-$(ARCH)/Packages
+	@cd $(REPO_DIR) && rm -f dists/stable/main/binary-$(ARCH)/Packages.gz
+	@cd $(REPO_DIR) && gzip -k dists/stable/main/binary-$(ARCH)/Packages
+	@cd $(REPO_DIR) && apt-ftparchive release dists/stable > dists/stable/Release
+	@cd $(REPO_DIR) && gpg --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
+	@cd $(REPO_DIR) && gpg --clearsign -o dists/stable/InRelease dists/stable/Release
+	@echo "Package published successfully!"
 
 # Release management
 .PHONY: release-major release-minor release-patch

@@ -1,4 +1,8 @@
+Origin: Docker Cleanup
+Label: Docker Cleanup
 Codename: stable
-Components: main
+Version: 1.0
 Architectures: amd64
-SignWith: 11D3D06C5893282ACA075D8C41AACBF24D5D0C96
+Components: main
+Description: Docker Cleanup Repository
+SignWith: 0x1234567890ABCDEF
