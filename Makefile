@@ -86,8 +86,8 @@ publish: build
 	@cd $(REPO_DIR) && rm -f dists/stable/main/binary-$(ARCH)/Packages.gz
 	@cd $(REPO_DIR) && gzip -k dists/stable/main/binary-$(ARCH)/Packages
 	@cd $(REPO_DIR) && apt-ftparchive release dists/stable > dists/stable/Release
-	@cd $(REPO_DIR) && gpg --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
-	@cd $(REPO_DIR) && gpg --clearsign -o dists/stable/InRelease dists/stable/Release
+	@cd $(REPO_DIR) && gpg --batch --yes --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
+	@cd $(REPO_DIR) && gpg --batch --yes --clearsign -o dists/stable/InRelease dists/stable/Release
 	@echo "Package published successfully!"
 
 # Release management

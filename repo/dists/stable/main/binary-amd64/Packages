@@ -4,10 +4,10 @@ Architecture: amd64
 Maintainer: Dedan Okware <softengdedan@gmail.com>
 Depends: docker-ce | docker.io, whiptail
 Filename: pool/main/d/docker-cleanup/docker-cleanup-1.0.0.deb
-Size: 3478
-MD5sum: b7c4087972cdaec36c349ac1c0c66121
-SHA1: 87ba41e2d2a33e9f8c9ccfd7ec156a3eb03270a1
-SHA256: 3851b39b01e56349ec28717e5eb109832e75871d4742f2147e140493486c0328
+Size: 3474
+MD5sum: 68a8a6d9b02f91b762441ff82906371a
+SHA1: 9d995c42c54b6f28cf131f9d57fb13d59dfa9640
+SHA256: e9dd7f4257c653eb21a22b4455ae0bfcdc86a21d40bbf95b5df4c270834cd637
 Section: admin
 Priority: optional
 Description: Interactive Docker cleanup utility
