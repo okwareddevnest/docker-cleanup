@@ -10,7 +10,7 @@ DEB_FILE=$(PACKAGE).deb
 
 # Repository info
 REPO_DIR=repo
-GPG_KEY_ID=0x1234567890ABCDEF
+GPG_KEY_ID=41AACBF24D5D0C96
 
 # Build targets
 .PHONY: all clean build publish release

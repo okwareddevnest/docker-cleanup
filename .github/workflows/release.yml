@@ -22,6 +22,8 @@ jobs:
           echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
           gpg --batch --yes --import <<< "${{ secrets.GPG_PRIVATE_KEY }}"
           echo "default-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
+          echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
+          gpg-connect-agent reloadagent /bye
           gpg --list-secret-keys --keyid-format LONG
 
       - name: Install dependencies
@@ -32,7 +34,9 @@ jobs:
       - name: Build package
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GNUPGHOME: ~/.gnupg
         run: |
+          echo "test" | gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" -as >/dev/null 2>&1 || exit 1
           make clean
           make publish
 
