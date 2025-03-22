@@ -31,7 +31,7 @@ jobs:
       - name: Build package
         run: |
           make clean
-          make publish
+          GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}" make publish
 
       - name: Generate release notes
         id: release_notes
