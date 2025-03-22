@@ -44,8 +44,9 @@ stop_containers() {
 remove_containers() {
     case $CLEANUP_MODE in
         "all")
-            log "Removing all stopped containers..."
-            docker rm $(docker ps -aq) 2>/dev/null || true
+            log "Removing all containers (running and stopped)..."
+            # Force remove all containers
+            docker rm -f $(docker ps -aq) 2>/dev/null || true
             ;;
         "stopped")
             log "Removing all stopped containers..."
@@ -54,7 +55,7 @@ remove_containers() {
         "older:"*)
             days=${CLEANUP_MODE#older:}
             log "Removing containers older than $days days..."
-            docker rm $(docker ps -aq --filter "until=${days}d") 2>/dev/null || true
+            docker rm -f $(docker ps -aq --filter "until=${days}d") 2>/dev/null || true
             ;;
         *)
             log "Invalid cleanup mode: $CLEANUP_MODE"
@@ -63,12 +64,43 @@ remove_containers() {
     esac
 }
 
+# Function to prune containers
+prune_containers() {
+    log "Pruning all stopped containers..."
+    docker container prune -f
+}
+
+# Function to prune unused resources
+prune_resources() {
+    log "Starting comprehensive Docker resource cleanup..."
+    
+    # Prune containers
+    prune_containers
+    
+    # Prune images
+    log "Pruning unused images..."
+    docker image prune -f
+    
+    # Prune networks
+    log "Pruning unused networks..."
+    docker network prune -f
+    
+    # Prune volumes
+    log "Pruning unused volumes..."
+    docker volume prune -f
+    
+    # Final system prune to catch anything missed
+    log "Performing final system cleanup..."
+    docker system prune -f --volumes
+    
+    log "Resource cleanup completed"
+}
+
 # Main cleanup process
+log "Starting Docker cleanup process..."
 stop_containers
 remove_containers
-
-# Prune unused data
-log "Pruning unused Docker resources..."
-docker system prune -f
+prune_containers  # Additional container pruning step
+prune_resources
 
 log "Docker cleanup completed successfully" 
