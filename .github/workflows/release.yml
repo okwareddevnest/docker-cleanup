@@ -1,15 +1,16 @@
-name: Release Package
+name: Release
 
 on:
   push:
     tags:
-      - 'v*' # Trigger on version tags
+      - 'v*'
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -17,64 +18,70 @@ jobs:
         run: |
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
+          echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
           echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          gpg --batch --import <<< "${{ secrets.GPG_PRIVATE_KEY }}"
           gpg --list-secret-keys --keyid-format LONG
 
-      - name: Build Package
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y reprepro
+
+      - name: Build package
+        run: |
           make clean
           make publish
 
-      - name: Create Release Notes
+      - name: Generate release notes
         id: release_notes
         run: |
-          # Get the tag that triggered this workflow
           TAG=${GITHUB_REF#refs/tags/}
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
           
-          # Get the previous tag
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          # Find the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 $TAG^ 2>/dev/null || echo "")
           
-          # Generate release notes
           if [ -z "$PREV_TAG" ]; then
-            # First release
-            git log --pretty=format:"* %s (%h)" > release_notes.txt
+            NOTES=$(git log --pretty=format:"* %s (%h)" $TAG)
           else
-            # Subsequent releases
-            git log --pretty=format:"* %s (%h)" $PREV_TAG..HEAD > release_notes.txt
+            NOTES=$(git log --pretty=format:"* %s (%h)" $PREV_TAG..$TAG)
           fi
           
-          # Add version info
-          echo "## Version $TAG" > release_notes.md
-          echo "" >> release_notes.md
-          echo "### Changes" >> release_notes.md
-          echo "" >> release_notes.md
-          cat release_notes.txt >> release_notes.md
-          echo "" >> release_notes.md
-          echo "### Installation" >> release_notes.md
-          echo "" >> release_notes.md
-          echo "```bash" >> release_notes.md
-          echo "# Add the GPG key" >> release_notes.md
-          echo "curl -fsSL https://raw.githubusercontent.com/okwareddevnest/docker-cleanup/main/docker-cleanup.gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-cleanup-archive-keyring.gpg" >> release_notes.md
-          echo "" >> release_notes.md
-          echo "# Add the repository" >> release_notes.md
-          echo "echo \"deb [signed-by=/usr/share/keyrings/docker-cleanup-archive-keyring.gpg] https://raw.githubusercontent.com/okwareddevnest/docker-cleanup/main/repo stable main\" | sudo tee /etc/apt/sources.list.d/docker-cleanup.list" >> release_notes.md
-          echo "" >> release_notes.md
-          echo "# Update and install" >> release_notes.md
-          echo "sudo apt-get update" >> release_notes.md
-          echo "sudo apt-get install docker-cleanup" >> release_notes.md
-          echo "```" >> release_notes.md
+          # Create release notes with installation instructions
+          {
+            echo "# Docker Cleanup $TAG"
+            echo ""
+            echo "## Changes in this release:"
+            echo ""
+            echo "$NOTES"
+            echo ""
+            echo "## Installation Instructions"
+            echo ""
+            echo "```bash"
+            echo "# Add the GPG key"
+            echo "curl -fsSL https://raw.githubusercontent.com/okwareddevnest/docker-cleanup/main/docker-cleanup.gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-cleanup-archive-keyring.gpg"
+            echo ""
+            echo "# Add the repository"
+            echo "echo \"deb [signed-by=/usr/share/keyrings/docker-cleanup-archive-keyring.gpg] https://raw.githubusercontent.com/okwareddevnest/docker-cleanup/main/repo stable main\" | sudo tee /etc/apt/sources.list.d/docker-cleanup.list"
+            echo ""
+            echo "# Update and install"
+            echo "sudo apt-get update"
+            echo "sudo apt-get install docker-cleanup"
+            echo "```"
+          } > RELEASE_NOTES.md
+          
+          RELEASE_NOTES_CONTENT=$(cat RELEASE_NOTES.md)
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             docker-cleanup-1.0.0.deb
             docker-cleanup.gpg
-          body_path: release_notes.md
-          draft: false
-          prerelease: false
+          body: ${{ steps.release_notes.outputs.notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
