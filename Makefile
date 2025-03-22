@@ -86,8 +86,8 @@ publish: build
 	@cd $(REPO_DIR) && rm -f dists/stable/main/binary-$(ARCH)/Packages.gz
 	@cd $(REPO_DIR) && gzip -k dists/stable/main/binary-$(ARCH)/Packages
 	@cd $(REPO_DIR) && apt-ftparchive release dists/stable > dists/stable/Release
-	@cd $(REPO_DIR) && echo "$(GPG_PASSPHRASE)" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
-	@cd $(REPO_DIR) && echo "$(GPG_PASSPHRASE)" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --clearsign -o dists/stable/InRelease dists/stable/Release
+	@cd $(REPO_DIR) && echo "$$GPG_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --default-key $(GPG_KEY_ID) --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
+	@cd $(REPO_DIR) && echo "$$GPG_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --default-key $(GPG_KEY_ID) --clearsign -o dists/stable/InRelease dists/stable/Release
 	@echo "Package published successfully!"
 
 # Release management

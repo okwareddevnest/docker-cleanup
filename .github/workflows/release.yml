@@ -20,7 +20,8 @@ jobs:
           chmod 700 ~/.gnupg
           echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
           echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
-          gpg --batch --import <<< "${{ secrets.GPG_PRIVATE_KEY }}"
+          gpg --batch --yes --import <<< "${{ secrets.GPG_PRIVATE_KEY }}"
+          echo "default-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
           gpg --list-secret-keys --keyid-format LONG
 
       - name: Install dependencies
@@ -29,9 +30,11 @@ jobs:
           sudo apt-get install -y reprepro
 
       - name: Build package
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           make clean
-          GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}" make publish
+          make publish
 
       - name: Generate release notes
         id: release_notes
